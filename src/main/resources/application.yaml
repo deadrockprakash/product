@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: ProductService
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/product
+    username: root
+    password: prakash1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: 8089
