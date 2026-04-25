@@ -75,7 +75,7 @@ public class ProductControllerTest {
     public void testGetProductById_Success(){
         //Arrange
         Long productID = 1L;
-        when(productService.getProductByid(productID)).thenReturn(productDto);
+        when(productService.getProductById(productID)).thenReturn(productDto);
 
         //Act
         ResponseEntity<ProductDto> response = productController.getProductById(productID);
@@ -84,15 +84,15 @@ public class ProductControllerTest {
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(productDto, response.getBody());
-        verify(productService,times(1)).getProductByid(productID);
+        verify(productService,times(1)).getProductById(productID);
     }
 
     @Test
     public void testGetProductById_VerifyServiceCall(){
         Long productId = 1L;
-        when(productService.getProductByid(productId)).thenReturn(productDto);
+        when(productService.getProductById(productId)).thenReturn(productDto);
         ResponseEntity<ProductDto> response = productController.getProductById(productId);
-        verify(productService,times(1)).getProductByid(productId);
+        verify(productService,times(1)).getProductById(productId);
     }
 
     @Test
@@ -102,7 +102,7 @@ public class ProductControllerTest {
         Long productId = 999L;
         String expectedMessage = "Product not found";
         String expectedError = "PRODUCT_NOT_FOUND";
-        when(productService.getProductByid(productId)).thenThrow(new ProductCustomException(expectedMessage,expectedError));
+        when(productService.getProductById(productId)).thenThrow(new ProductCustomException(expectedMessage,expectedError));
 
         //Act and assert
         ProductCustomException exception = assertThrows(ProductCustomException.class,
@@ -111,7 +111,7 @@ public class ProductControllerTest {
         //verify the exception details
         assertEquals(expectedMessage, exception.getMessage());
         assertEquals(expectedError, exception.getErrorCode());
-        verify(productService,times(1)).getProductByid(productId);
+        verify(productService,times(1)).getProductById(productId);
     }
 
 }
