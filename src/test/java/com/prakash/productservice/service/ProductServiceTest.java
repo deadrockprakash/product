@@ -68,7 +68,7 @@ public class ProductServiceTest {
        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
        //act
-       ProductDto result = productServiceImpl.getProductByid(1L);
+       ProductDto result = productServiceImpl.getProductById(1L);
 
        //assert
        assertNotNull(result);
@@ -84,7 +84,7 @@ public class ProductServiceTest {
     public void testGetProductById_ProductNotFound(){
         Long id = 11111L;
         when(productRepository.findById(id)).thenReturn(Optional.empty());
-       assertThrows(ProductCustomException.class,()->productServiceImpl.getProductByid(id));
+       assertThrows(ProductCustomException.class,()->productServiceImpl.getProductById(id));
        verify(productRepository).findById(id);
 
     }
