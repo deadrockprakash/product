@@ -3,9 +3,9 @@ spring:
     name: ProductService
 
   datasource:
-    url: jdbc:mysql://localhost:3306/product
-    username: root
-    password: prakash1234
+    url: jdbc:mysql://${DB_HOST}:3306/product
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:

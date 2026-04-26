@@ -22,8 +22,8 @@ services:
       retries: 5
 
   product-service:
-    build: .
-    image: product-service
+    #build: . this is for development, when you want to build the image locally from the Dockerfile
+    image: dizprakash/product-service
     container_name: product-service
     environment:
       DB_HOST: mysql-db
