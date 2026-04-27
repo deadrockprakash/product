@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
     }
     @Test
     @DisplayName("save product when success")
-     void testSaveProduct_Success(){
+     void saveProduct_ShouldReturnId_WhenProductIsValid(){
         Long expectedId = 1L;
         //Arrange
         when(productService.saveProduct(any(ProductDto.class))).thenReturn(expectedId);
@@ -73,7 +73,7 @@ import static org.mockito.Mockito.*;
 
     @Test
     @DisplayName("get product when success")
-     void testGetProductById_Success(){
+     void getProductById_ShouldReturnProductDto_WhenProductExists(){
         //Arrange
         Long productID = 1L;
         when(productService.getProductById(productID)).thenReturn(productDto);
@@ -99,7 +99,7 @@ import static org.mockito.Mockito.*;
 
     @Test
     @DisplayName("get product when product not found")
-     void testGetProductById_ProductNotFound(){
+     void getProductById_ShouldThrowException_WhenProductDoesNotExist(){
         //Arrange
         Long productId = 999L;
         String expectedMessage = "Product not found";
