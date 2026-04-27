@@ -35,7 +35,7 @@ public class ProductController {
                  ))
         @ApiResponses(value = {
                 @ApiResponse(
-                        responseCode = "200",
+                        responseCode = "201",
                         description = "Product created successfully",
                         content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = Long.class))
@@ -50,7 +50,7 @@ public class ProductController {
         })
 
         public ResponseEntity<Long> saveProduct(@RequestBody ProductDto  productDto) {
-            return new ResponseEntity<>(productService.saveProduct(productDto), HttpStatus.OK);
+            return new ResponseEntity<>(productService.saveProduct(productDto), HttpStatus.CREATED);
         }
 
         @GetMapping("/{id}")
