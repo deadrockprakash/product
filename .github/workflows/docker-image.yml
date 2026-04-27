@@ -30,7 +30,7 @@ jobs:
 
       - name: compile code
         run: |
-           chmod +x mvnw 
+          chmod +x mvnw 
           ./mvnw  compile # Compile code to check for compilation errors
 
       - name: SonarCloud Scan
