@@ -29,7 +29,6 @@ public class ProductServiceImpl implements ProductService {
     public ProductDto getProductById(Long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ProductCustomException("Product not found " + id, "Product_not_found"));
         return ProductDto.builder()
-                .id(product.getId())
                 .name(product.getName())
                 .price(product.getPrice())
                 .description(product.getDescription())
