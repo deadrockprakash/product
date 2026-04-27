@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class ProductServiceTest {
+class ProductServiceTest {
     @Mock
     ProductRepository productRepository;
 
@@ -30,7 +30,7 @@ public class ProductServiceTest {
     private ProductDto productDto;
 
     @BeforeEach
-    public void setup(){
+    void setup(){
         product = Product.builder()
                 .id(1L)
                 .name("Laptop")
@@ -49,7 +49,7 @@ public class ProductServiceTest {
     }
 
    @Test
-    public void testSaveProduct_Success() {
+   void testSaveProduct_Success() {
        //Arrange
        when(productRepository.save(any(Product.class))).thenReturn(product);
 
@@ -63,7 +63,7 @@ public class ProductServiceTest {
    }
 
    @Test
-    public void testGetProductById_Success() {
+   void testGetProductById_Success() {
        //Arrange
        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
@@ -81,7 +81,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void testGetProductById_ProductNotFound(){
+    void testGetProductById_ProductNotFound(){
         Long id = 11111L;
         when(productRepository.findById(id)).thenReturn(Optional.empty());
        assertThrows(ProductCustomException.class,()->productServiceImpl.getProductById(id));

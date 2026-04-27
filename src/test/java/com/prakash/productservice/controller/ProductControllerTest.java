@@ -20,7 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class ProductControllerTest {
+ class ProductControllerTest {
     @Mock
     ProductService productService;
 
@@ -30,7 +30,7 @@ public class ProductControllerTest {
     private ProductDto productDto;
 
     @BeforeEach
-    public void setup(){
+     void setup(){
         productDto = ProductDto.builder()
                 .id(1L)
                 .name("Iphone 14 Pro Max")
@@ -41,7 +41,7 @@ public class ProductControllerTest {
     }
     @Test
     @DisplayName("save product when success")
-    public void testSaveProduct_Success(){
+     void testSaveProduct_Success(){
         Long expectedId = 1L;
         //Arrange
         when(productService.saveProduct(any(ProductDto.class))).thenReturn(expectedId);
@@ -58,7 +58,7 @@ public class ProductControllerTest {
     }
     @Test
     @DisplayName("verify Service call when product is saved")
-    public void testSaveProduct_VerifyServiceCall(){
+     void testSaveProduct_VerifyServiceCall(){
         //Arrange
         when(productService.saveProduct(any(ProductDto.class))).thenReturn(1L);
 
@@ -66,13 +66,14 @@ public class ProductControllerTest {
         ResponseEntity<Long> response = productController.saveProduct(productDto);
 
         //Assert
+        assertNotNull(response);
         verify(productService,times(1)).saveProduct(any(ProductDto.class));
 
     }
 
     @Test
     @DisplayName("get product when success")
-    public void testGetProductById_Success(){
+     void testGetProductById_Success(){
         //Arrange
         Long productID = 1L;
         when(productService.getProductById(productID)).thenReturn(productDto);
@@ -88,16 +89,17 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testGetProductById_VerifyServiceCall(){
+     void testGetProductById_VerifyServiceCall(){
         Long productId = 1L;
         when(productService.getProductById(productId)).thenReturn(productDto);
         ResponseEntity<ProductDto> response = productController.getProductById(productId);
+        assertNotNull(response);
         verify(productService,times(1)).getProductById(productId);
     }
 
     @Test
     @DisplayName("get product when product not found")
-    public void testGetProductById_ProductNotFound(){
+     void testGetProductById_ProductNotFound(){
         //Arrange
         Long productId = 999L;
         String expectedMessage = "Product not found";
