@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 15s # How often to pull metrics
+
+scrape_configs:
+  - job_name: 'spring-boot-app'
+    metrics_path: '/actuator/prometheus' # The endpoint we exposed in properties
+    static_configs:
+      - targets: ['product-service:8089'] # 'product-service' is the container name

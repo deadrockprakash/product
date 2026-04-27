@@ -37,6 +37,32 @@ services:
     networks:
         - product-network
 
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml # Mount the config file
+      - prometheus-data:/prometheus # Persistent storage for metrics
+    ports:
+      - "9090:9090"
+    networks:
+      - product-network
+
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var,lib/grafana # Persistent storage for dashboards
+    networks:
+      - product-network
+    depends_on:
+      - prometheus
+
+
 networks:
     product-network:
         driver: bridge
