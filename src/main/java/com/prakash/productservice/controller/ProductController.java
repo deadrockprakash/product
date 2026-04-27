@@ -2,9 +2,11 @@ package com.prakash.productservice.controller;
 
 
 import com.prakash.productservice.dto.ProductDto;
+import com.prakash.productservice.exception.ErrorMessage;
 import com.prakash.productservice.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/product")
-@Tag(name = "Product COntroller", description = "API for managing products")
+@Tag(name = "Product Controller", description = "API for managing products")
 public class ProductController {
     private final ProductService  productService;
     public ProductController(ProductService productService) {
@@ -28,19 +30,22 @@ public class ProductController {
                  requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                          description = "Product details to be added",
                          required = true,
-                         content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+                         content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                            schema = @Schema(implementation = ProductDto.class))
                  ))
         @ApiResponses(value = {
                 @ApiResponse(
                         responseCode = "200",
                         description = "Product created successfully",
-                        content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+                        content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = Long.class))
 
                 ),
                 @ApiResponse(
                         responseCode = "400",
                         description = "Invalid product details provided",
-                        content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+                        content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                schema = @Schema(implementation = String.class))
                 )
         })
 
@@ -54,11 +59,13 @@ public class ProductController {
                 @ApiResponse(
                         responseCode = "200",
                         description = "Product found successfully",
-                        content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                        content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                schema = @Schema(implementation = ProductDto.class))),
                 @ApiResponse(
                         responseCode = "404",
                         description = "Product not found with the given ID",
-                content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
+                content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorMessage.class)))
         })
         public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
         ProductDto productDto = productService.getProductById(id);
