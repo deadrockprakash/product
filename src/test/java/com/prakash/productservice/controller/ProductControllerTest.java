@@ -32,7 +32,6 @@ import static org.mockito.Mockito.*;
     @BeforeEach
      void setup(){
         productDto = ProductDto.builder()
-                .id(1L)
                 .name("Iphone 14 Pro Max")
                 .description("Apple iPhone 14 Pro Max (128GB) - Space Black")
                 .price(new BigDecimal("109900.00"))
