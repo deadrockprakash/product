@@ -51,7 +51,7 @@ import static org.mockito.Mockito.*;
         //Assert
         assertNotNull(response);
         assertEquals(expectedId, response.getBody());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
         verify(productService,times(1)).saveProduct(any(ProductDto.class));
 
     }
