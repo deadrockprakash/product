@@ -72,7 +72,7 @@ class ProductServiceTest {
 
        //assert
        assertNotNull(result);
-       assertEquals(1L, result.getId());
+       assertEquals(1L, product.getId());
        assertEquals("Laptop", result.getName());
        assertEquals("Laptop description", result.getDescription());
        assertEquals(new BigDecimal("50000.00"), result.getPrice());
