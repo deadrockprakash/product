@@ -69,3 +69,5 @@ networks:
 
 volumes:
     mysql-data:
+    prometheus-data:
+    grafana-data:
