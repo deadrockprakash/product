@@ -2,6 +2,7 @@ package com.prakash.productservice.Security;
 
 import com.prakash.productservice.repository.UserRepository;
 import com.prakash.productservice.service.UserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,13 +18,18 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     private final UserRepository userRepository;
-    public  SecurityConfig(UserRepository userRepository) {
+    private final JwtFilter jwtFilter;
+
+    public  SecurityConfig(UserRepository userRepository, JwtFilter jwtFilter) {
+
         this.userRepository = userRepository;
+        this.jwtFilter = jwtFilter;
     }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
@@ -31,9 +37,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests( auth -> auth
                         .requestMatchers(HttpMethod.POST,"/api/users").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/users/authenticate").permitAll()
                         .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults());
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
     @Bean
