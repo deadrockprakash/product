@@ -3,7 +3,6 @@ package com.prakash.productservice.service;
 import com.prakash.productservice.dto.UserDto;
 import com.prakash.productservice.entity.UserEntity;
 import com.prakash.productservice.repository.UserRepository;
-import jakarta.validation.constraints.NotNull;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
