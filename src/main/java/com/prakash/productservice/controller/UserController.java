@@ -50,9 +50,9 @@ public class UserController {
     public ResponseEntity<String> authenticateUser(@RequestBody AuthRequest authRequest) {
         log.info("Authenticating user {}", authRequest.getUsername());
         try{
-        Authentication authenticate = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
-        );
+            Authentication authenticate = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
+            );
             log.info("Authentication result: {}", authenticate);
             if(authenticate.isAuthenticated()) {
                String role = authenticate.getAuthorities().iterator().next().getAuthority();

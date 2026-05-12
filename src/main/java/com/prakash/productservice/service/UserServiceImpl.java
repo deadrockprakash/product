@@ -2,7 +2,6 @@ package com.prakash.productservice.service;
 
 import com.prakash.productservice.dto.UserDto;
 import com.prakash.productservice.dto.UserDtoResponse;
-import com.prakash.productservice.entity.ROLE;
 import com.prakash.productservice.entity.UserEntity;
 import com.prakash.productservice.repository.UserRepository;
 import lombok.extern.log4j.Log4j2;
