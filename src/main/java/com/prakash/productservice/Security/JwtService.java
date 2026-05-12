@@ -14,12 +14,12 @@ import java.util.HashMap;
 public class JwtService {
     public static  final String SECRET_KEY = "mysecretkeymysecretkeymysecretkeymysecretkey";
 
-     public String generateToken(String username) {
-        // Implement JWT token generation logic here
+     public String generateToken(String username,String role) {
+
          return Jwts.builder()
                  .subject(username)
                  .signWith(getSecretKey())
-                 .claim("roles", new HashMap<>()) // Add roles or other claims as needed
+                 .claim("role",role) // Add roles or other claims as needed
                  .issuedAt(new Date())
                  .expiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hour expiration
                  .compact();

@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -48,7 +49,7 @@ public class ProductController {
                                 schema = @Schema(implementation = String.class))
                 )
         })
-
+        @PreAuthorize("hasAnyAuthority('ADD')")
         public ResponseEntity<Long> saveProduct(@RequestBody ProductDto  productDto) {
             return new ResponseEntity<>(productService.saveProduct(productDto), HttpStatus.CREATED);
         }
@@ -67,6 +68,7 @@ public class ProductController {
                 content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorMessage.class)))
         })
+        @PreAuthorize("hasAnyAuthority('VIEW','VIEW_ALL')")
         public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
         ProductDto productDto = productService.getProductById(id);
             return new ResponseEntity<>(productDto,HttpStatus.OK);
