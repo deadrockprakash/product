@@ -3,9 +3,9 @@ spring:
     name: ProductService
 
   datasource:
-    url: jdbc:mysql://localhost:3306/product
-    username: root
-    password: prakash1234
+    url: ${DB_URL:jdbc:mysql://localhost:3306/product}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -21,7 +21,7 @@ spring:
     locations: classpath:db/migration
 
 server:
-  port: 8090
+  port: ${SERVER_PORT:8090}
 
 management:
   endpoints:
@@ -31,4 +31,8 @@ management:
   endpoint:
     health:
       show-details: always
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration-ms: ${JWT_EXPIRATION_MS:3600000}
 

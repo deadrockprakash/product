@@ -5,10 +5,10 @@ services:
     image: mysql:8.0
     container_name: mysql-db
     environment:
-        MYSQL_ROOT_PASSWORD: prakash123
+        MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?prakash1234}
         MYSQL_DATABASE: product
-        MYSQL_USER: prakash
-        MYSQL_PASSWORD: password123
+        MYSQL_USER: ${DB_USERNAME:root}
+        MYSQL_PASSWORD: ${DB_PASSWORD:?prakash1234}
     ports:
          - "3307:3306"
     volumes:
@@ -26,11 +26,15 @@ services:
     image: dizprakash/product-service
     container_name: product-service
     environment:
-      DB_HOST: mysql-db
-      DB_USERNAME: prakash
-      DB_PASSWORD: password123
+      DB_URL: jdbc:mysql://mysql-db:3306/product
+      DB_USERNAME: ${DB_USERNAME:?DB_USERNAME must be set}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-3600000}
+      SERVER_PORT: ${SERVER_PORT:-8089}
+      SPRINGDOC_ENABLED: ${SPRINGDOC_ENABLED:-false}
     ports:
-      - "8089:8089"
+      - "${SERVER_PORT:-8089}:${SERVER_PORT:-8089}"
     depends_on:
       mysql-db:
         condition: service_healthy
