@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "products")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

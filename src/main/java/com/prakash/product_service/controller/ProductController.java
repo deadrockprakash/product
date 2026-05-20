@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/product")
 public class ProductController implements ProductApi {
@@ -31,5 +33,12 @@ public class ProductController implements ProductApi {
     public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
         ProductDto productDto = productService.getProductById(id);
         return new ResponseEntity<>(productDto, HttpStatus.OK);
+    }
+
+    @Override
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyAuthority('VIEW','VIEW_ALL')")
+    public ResponseEntity<List<ProductDto>> searchProducts(@RequestParam(required = false) String keyword) {
+        return new ResponseEntity<>(productService.searchProducts(keyword), HttpStatus.OK);
     }
 }

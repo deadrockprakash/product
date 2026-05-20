@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -113,6 +114,21 @@ import static org.mockito.Mockito.*;
         assertEquals(expectedMessage, exception.getMessage());
         assertEquals(expectedError, exception.getErrorCode());
         verify(productService,times(1)).getProductById(productId);
+    }
+
+    @Test
+    @DisplayName("search products when success")
+    void searchProducts_ShouldReturnMatchingProducts() {
+        when(productService.searchProducts("iphone")).thenReturn(List.of(productDto));
+
+        ResponseEntity<List<ProductDto>> response = productController.searchProducts("iphone");
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assert response.getBody() != null;
+        assertEquals(1, response.getBody().size());
+        assertEquals(productDto, response.getBody().getFirst());
+        verify(productService, times(1)).searchProducts("iphone");
     }
 
 }

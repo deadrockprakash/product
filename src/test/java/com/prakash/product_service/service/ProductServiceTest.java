@@ -3,6 +3,7 @@ package com.prakash.product_service.service;
 import com.prakash.product_service.dto.ProductDto;
 import com.prakash.product_service.entity.Product;
 import com.prakash.product_service.exception.ProductCustomException;
+import com.prakash.product_service.messaging.ProductEventPublisher;
 import com.prakash.product_service.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +24,9 @@ import static org.mockito.Mockito.*;
 class ProductServiceTest {
     @Mock
     ProductRepository productRepository;
+
+    @Mock
+    ProductEventPublisher productEventPublisher;
 
     @InjectMocks
     ProductServiceImpl productServiceImpl;
@@ -59,7 +64,22 @@ class ProductServiceTest {
        //assert
        assertNotNull(result);
        assertEquals(1L, result);
-       verify(productRepository).save(any(Product.class));
+       verify(productRepository).save(argThat(savedProduct ->
+               "Laptop".equals(savedProduct.getName())
+                       && "Laptop description".equals(savedProduct.getDescription())
+                       && new BigDecimal("50000.00").equals(savedProduct.getPrice())
+                       && Integer.valueOf(4).equals(savedProduct.getQuantity())
+       ));
+       verify(productEventPublisher).publishProductCreated(argThat(event ->
+               event.eventId() != null
+                       && !event.eventId().isBlank()
+                       && Long.valueOf(1L).equals(event.productId())
+                       && "Laptop".equals(event.name())
+                       && "Laptop description".equals(event.description())
+                       && new BigDecimal("50000.00").equals(event.price())
+                       && Integer.valueOf(4).equals(event.quantity())
+                       && event.createdAt() != null
+       ));
    }
 
    @Test
@@ -89,6 +109,30 @@ class ProductServiceTest {
 
     }
 
+    @Test
+    void testSearchProducts_WithKeyword() {
+        when(productRepository.searchByKeyword("Laptop")).thenReturn(List.of(product));
+
+        List<ProductDto> result = productServiceImpl.searchProducts(" Laptop ");
+
+        assertEquals(1, result.size());
+        assertEquals("Laptop", result.getFirst().getName());
+        assertEquals("Laptop description", result.getFirst().getDescription());
+        verify(productRepository).searchByKeyword("Laptop");
+        verify(productRepository, never()).findAll();
+    }
+
+    @Test
+    void testSearchProducts_WithoutKeywordReturnsAllProducts() {
+        when(productRepository.findAll()).thenReturn(List.of(product));
+
+        List<ProductDto> result = productServiceImpl.searchProducts(" ");
+
+        assertEquals(1, result.size());
+        assertEquals("Laptop", result.getFirst().getName());
+        verify(productRepository).findAll();
+        verify(productRepository, never()).searchByKeyword(anyString());
+    }
 
 
 
