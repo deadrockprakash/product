@@ -1,5 +1,6 @@
 package com.prakash.product_service.controller;
 
+import com.prakash.product_service.controller.api.MailApi;
 import com.prakash.product_service.dto.MailRequest;
 import com.prakash.product_service.service.MailService;
 import jakarta.validation.Valid;
@@ -13,13 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/mail")
-public class MailController {
+public class MailController implements MailApi {
     private final MailService mailService;
 
     public MailController(MailService mailService) {
         this.mailService = mailService;
     }
 
+    @Override
     @PostMapping("/send")
     @PreAuthorize("hasAnyAuthority('ADD')")
     public ResponseEntity<String> sendMail(@Valid @RequestBody MailRequest mailRequest) {

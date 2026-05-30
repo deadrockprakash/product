@@ -1,5 +1,6 @@
 package com.prakash.product_service.controller;
 
+import com.prakash.product_service.controller.api.UserApi;
 import com.prakash.product_service.security.JwtService;
 import com.prakash.product_service.dto.AuthRequest;
 import com.prakash.product_service.dto.UserDto;
@@ -20,7 +21,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/users")
-public class UserController {
+public class UserController implements UserApi {
     private final UserService userService;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -31,22 +32,27 @@ public class UserController {
         this.authenticationManager = authenticationManager;
     }
 
+    @Override
     @PostMapping
     public ResponseEntity<String> saveUser(@Valid @RequestBody UserDto userDto) {
         return new ResponseEntity<>(userService.saveUser(userDto), HttpStatus.CREATED);
     }
+
+    @Override
     @GetMapping("/{userName}")
     @PreAuthorize("hasAnyAuthority('ADD','VIEW','VIEW_ALL')")
-    public ResponseEntity<UserDto> getAllUsers(@PathVariable String userName) {
+    public ResponseEntity<UserDto> getUserByUserName(@PathVariable String userName) {
         return new ResponseEntity<>(userService.findUserByUserName(userName), HttpStatus.OK);
     }
 
+    @Override
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADD','VIEW','VIEW_ALL')")
     public ResponseEntity<List<UserDtoResponse>> getAllUsers() {
         return new ResponseEntity<>(userService.getAllUsers(),HttpStatus.OK);
     }
 
+    @Override
     @PostMapping("/authenticate")
     public ResponseEntity<String> authenticateUser(@Valid @RequestBody AuthRequest authRequest) {
         log.info("Authenticating user {}", authRequest.getUsername());
