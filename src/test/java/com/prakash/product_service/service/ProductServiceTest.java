@@ -148,6 +148,63 @@ class ProductServiceTest {
         verify(productRepository, never()).searchByKeyword(anyString(), any());
     }
 
+    @Test
+    void updateProduct_ShouldUpdateExistingProduct() {
+        ProductDto updateRequest = ProductDto.builder()
+                .name("Updated Laptop")
+                .description("Updated description")
+                .price(new BigDecimal("60000.00"))
+                .quantity(6)
+                .build();
+        Product updatedProduct = Product.builder()
+                .id(1L)
+                .name("Updated Laptop")
+                .description("Updated description")
+                .price(new BigDecimal("60000.00"))
+                .quantity(6)
+                .build();
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.save(product)).thenReturn(updatedProduct);
+
+        ProductDto result = productServiceImpl.updateProduct(1L, updateRequest);
+
+        assertEquals("Updated Laptop", result.getName());
+        assertEquals("Updated description", result.getDescription());
+        assertEquals(new BigDecimal("60000.00"), result.getPrice());
+        assertEquals(6, result.getQuantity());
+        verify(productRepository).findById(1L);
+        verify(productRepository).save(product);
+    }
+
+    @Test
+    void updateProduct_ShouldThrowException_WhenProductDoesNotExist() {
+        when(productRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(ProductCustomException.class, () -> productServiceImpl.updateProduct(99L, productDto));
+
+        verify(productRepository).findById(99L);
+        verify(productRepository, never()).save(any(Product.class));
+    }
+
+    @Test
+    void deleteProduct_ShouldDeleteExistingProduct() {
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+
+        productServiceImpl.deleteProduct(1L);
+
+        verify(productRepository).findById(1L);
+        verify(productRepository).delete(product);
+    }
+
+    @Test
+    void deleteProduct_ShouldThrowException_WhenProductDoesNotExist() {
+        when(productRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(ProductCustomException.class, () -> productServiceImpl.deleteProduct(99L));
+
+        verify(productRepository).findById(99L);
+        verify(productRepository, never()).delete(any(Product.class));
+    }
 
 
 }

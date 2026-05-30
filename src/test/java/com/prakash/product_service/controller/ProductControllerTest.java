@@ -142,4 +142,30 @@ import static org.mockito.Mockito.*;
         verify(productService, times(1)).searchProducts("iphone", 0, 10);
     }
 
+    @Test
+    @DisplayName("update product when success")
+    void updateProduct_ShouldReturnUpdatedProduct() {
+        Long productId = 1L;
+        when(productService.updateProduct(productId, productDto)).thenReturn(productDto);
+
+        ResponseEntity<ProductDto> response = productController.updateProduct(productId, productDto);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(productDto, response.getBody());
+        verify(productService, times(1)).updateProduct(productId, productDto);
+    }
+
+    @Test
+    @DisplayName("delete product when success")
+    void deleteProduct_ShouldReturnNoContent() {
+        Long productId = 1L;
+
+        ResponseEntity<Void> response = productController.deleteProduct(productId);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(productService, times(1)).deleteProduct(productId);
+    }
+
 }

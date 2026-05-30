@@ -9,4 +9,8 @@ public interface ProductService {
     ProductDto getProductById(Long id);
 
     PagedResponse<ProductDto> searchProducts(String keyword, int page, int size);
+
+    ProductDto updateProduct(Long id, ProductDto productDto);
+
+    void deleteProduct(Long id);
 }

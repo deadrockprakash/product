@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,7 +49,7 @@ public interface ProductApi {
                     )
             )
     })
-    ResponseEntity<Long> saveProduct(@RequestBody ProductDto productDto);
+    ResponseEntity<Long> saveProduct(@Valid @RequestBody ProductDto productDto);
 
     @Operation(
             summary = "Get product by ID",
@@ -93,4 +94,45 @@ public interface ProductApi {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     );
+
+    @Operation(
+            summary = "Update product",
+            description = "Updates an existing product with the provided details"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Product updated successfully",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProductDto.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Product not found with the given ID",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorMessage.class)
+                    )
+            )
+    })
+    ResponseEntity<ProductDto> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductDto productDto);
+
+    @Operation(
+            summary = "Delete product",
+            description = "Deletes an existing product by ID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Product deleted successfully"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Product not found with the given ID",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorMessage.class)
+                    )
+            )
+    })
+    ResponseEntity<Void> deleteProduct(@PathVariable Long id);
 }

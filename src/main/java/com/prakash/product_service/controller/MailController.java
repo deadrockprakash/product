@@ -2,6 +2,7 @@ package com.prakash.product_service.controller;
 
 import com.prakash.product_service.dto.MailRequest;
 import com.prakash.product_service.service.MailService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,7 +22,7 @@ public class MailController {
 
     @PostMapping("/send")
     @PreAuthorize("hasAnyAuthority('ADD')")
-    public ResponseEntity<String> sendMail(@RequestBody MailRequest mailRequest) {
+    public ResponseEntity<String> sendMail(@Valid @RequestBody MailRequest mailRequest) {
         mailService.sendMail(mailRequest);
         return new ResponseEntity<>("Mail sent successfully", HttpStatus.OK);
     }

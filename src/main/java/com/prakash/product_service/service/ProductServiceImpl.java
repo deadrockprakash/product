@@ -46,13 +46,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto getProductById(Long id) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new ProductCustomException("Product not found " + id, "Product_not_found"));
-        return ProductDto.builder()
-                .name(product.getName())
-                .price(product.getPrice())
-                .description(product.getDescription())
-                .quantity(product.getQuantity())
-                .build();
+        Product product = findProductOrThrow(id);
+        return toDto(product);
     }
 
     @Override
@@ -67,6 +62,27 @@ public class ProductServiceImpl implements ProductService {
                 : productRepository.searchByKeyword(searchKeyword, pageable);
 
         return toPagedResponse(products);
+    }
+
+    @Override
+    public ProductDto updateProduct(Long id, ProductDto productDto) {
+        Product product = findProductOrThrow(id);
+        product.setName(productDto.getName());
+        product.setDescription(productDto.getDescription());
+        product.setPrice(productDto.getPrice());
+        product.setQuantity(productDto.getQuantity());
+        return toDto(productRepository.save(product));
+    }
+
+    @Override
+    public void deleteProduct(Long id) {
+        Product product = findProductOrThrow(id);
+        productRepository.delete(product);
+    }
+
+    private Product findProductOrThrow(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ProductCustomException("Product not found " + id, "PRODUCT_NOT_FOUND"));
     }
 
     private ProductDto toDto(Product product) {

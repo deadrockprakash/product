@@ -5,7 +5,9 @@ A Spring Boot REST API for product management with JWT security, role-based perm
 ## Features
 
 - Product creation and lookup by ID
+- Product update and delete operations
 - Paginated product listing and full-text search by product name or description
+- Request validation for products, users, authentication, and mail
 - User registration and JWT authentication
 - Role and permission based authorization
 - Email sending endpoint
@@ -199,6 +201,8 @@ Available roles:
 | `POST` | `/api/v1/product/add` | `ADD` | Create a product |
 | `GET` | `/api/v1/product/{id}` | `VIEW` or `VIEW_ALL` | Get product by ID |
 | `GET` | `/api/v1/product/search?keyword=phone&page=0&size=10` | `VIEW` or `VIEW_ALL` | Search or list products |
+| `PUT` | `/api/v1/product/{id}` | `ADD` | Update a product |
+| `DELETE` | `/api/v1/product/{id}` | `ADD` | Delete a product |
 
 Create product request:
 
@@ -257,6 +261,23 @@ Mail request:
 | Prometheus metrics | `/actuator/prometheus` |
 
 Swagger endpoints are public. Other application endpoints require JWT unless explicitly listed as public.
+
+## Error Responses
+
+API errors use a consistent response body:
+
+```json
+{
+  "message": "Request validation failed",
+  "errorCode": "VALIDATION_FAILED",
+  "status": 400,
+  "path": "/api/v1/product/add",
+  "timestamp": "2026-05-30T10:15:30Z",
+  "errors": {
+    "name": "Product name is required"
+  }
+}
+```
 
 ## Database
 

@@ -5,6 +5,7 @@ import com.prakash.product_service.dto.AuthRequest;
 import com.prakash.product_service.dto.UserDto;
 import com.prakash.product_service.dto.UserDtoResponse;
 import com.prakash.product_service.service.UserService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> saveUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<String> saveUser(@Valid @RequestBody UserDto userDto) {
         return new ResponseEntity<>(userService.saveUser(userDto), HttpStatus.CREATED);
     }
     @GetMapping("/{userName}")
@@ -47,7 +48,7 @@ public class UserController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<String> authenticateUser(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<String> authenticateUser(@Valid @RequestBody AuthRequest authRequest) {
         log.info("Authenticating user {}", authRequest.getUsername());
         try{
             Authentication authenticate = authenticationManager.authenticate(

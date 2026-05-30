@@ -5,6 +5,7 @@ import com.prakash.product_service.controller.api.ProductApi;
 import com.prakash.product_service.dto.PagedResponse;
 import com.prakash.product_service.dto.ProductDto;
 import com.prakash.product_service.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +23,7 @@ public class ProductController implements ProductApi {
     @Override
     @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('ADD')")
-    public ResponseEntity<Long> saveProduct(@RequestBody ProductDto productDto) {
+    public ResponseEntity<Long> saveProduct(@Valid @RequestBody ProductDto productDto) {
         return new ResponseEntity<>(productService.saveProduct(productDto), HttpStatus.CREATED);
     }
 
@@ -43,5 +44,20 @@ public class ProductController implements ProductApi {
             @RequestParam(defaultValue = "10") int size
     ) {
         return new ResponseEntity<>(productService.searchProducts(keyword, page, size), HttpStatus.OK);
+    }
+
+    @Override
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADD')")
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductDto productDto) {
+        return new ResponseEntity<>(productService.updateProduct(id, productDto), HttpStatus.OK);
+    }
+
+    @Override
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADD')")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
