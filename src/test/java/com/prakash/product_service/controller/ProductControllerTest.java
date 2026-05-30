@@ -1,5 +1,6 @@
 package com.prakash.product_service.controller;
 
+import com.prakash.product_service.dto.PagedResponse;
 import com.prakash.product_service.dto.ProductDto;
 import com.prakash.product_service.exception.ProductCustomException;
 import com.prakash.product_service.service.ProductService;
@@ -119,16 +120,26 @@ import static org.mockito.Mockito.*;
     @Test
     @DisplayName("search products when success")
     void searchProducts_ShouldReturnMatchingProducts() {
-        when(productService.searchProducts("iphone")).thenReturn(List.of(productDto));
+        PagedResponse<ProductDto> pagedResponse = PagedResponse.<ProductDto>builder()
+                .content(List.of(productDto))
+                .page(0)
+                .size(10)
+                .totalElements(1)
+                .totalPages(1)
+                .last(true)
+                .build();
+        when(productService.searchProducts("iphone", 0, 10)).thenReturn(pagedResponse);
 
-        ResponseEntity<List<ProductDto>> response = productController.searchProducts("iphone");
+        ResponseEntity<PagedResponse<ProductDto>> response = productController.searchProducts("iphone", 0, 10);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assert response.getBody() != null;
-        assertEquals(1, response.getBody().size());
-        assertEquals(productDto, response.getBody().getFirst());
-        verify(productService, times(1)).searchProducts("iphone");
+        assertEquals(1, response.getBody().getContent().size());
+        assertEquals(productDto, response.getBody().getContent().getFirst());
+        assertEquals(0, response.getBody().getPage());
+        assertEquals(10, response.getBody().getSize());
+        verify(productService, times(1)).searchProducts("iphone", 0, 10);
     }
 
 }

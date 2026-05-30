@@ -1,5 +1,6 @@
 package com.prakash.product_service.service;
 
+import com.prakash.product_service.dto.PagedResponse;
 import com.prakash.product_service.dto.ProductDto;
 import com.prakash.product_service.entity.Product;
 import com.prakash.product_service.event.ProductCreatedEvent;
@@ -7,10 +8,13 @@ import com.prakash.product_service.exception.ProductCustomException;
 import com.prakash.product_service.messaging.ProductEventPublisher;
 import com.prakash.product_service.repository.ProductRepository;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -52,15 +56,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> searchProducts(String keyword) {
+    public PagedResponse<ProductDto> searchProducts(String keyword, int page, int size) {
+        int pageNumber = Math.max(page, 0);
+        int pageSize = Math.clamp(size, 1, 100);
+        Pageable sortedPageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
         String searchKeyword = keyword == null ? "" : keyword.trim();
-        List<Product> products = searchKeyword.isBlank()
-                ? productRepository.findAll()
-                : productRepository.searchByKeyword(searchKeyword);
+        Page<Product> products = searchKeyword.isBlank()
+                ? productRepository.findAll(sortedPageable)
+                : productRepository.searchByKeyword(searchKeyword, pageable);
 
-        return products.stream()
-                .map(this::toDto)
-                .toList();
+        return toPagedResponse(products);
     }
 
     private ProductDto toDto(Product product) {
@@ -69,6 +75,18 @@ public class ProductServiceImpl implements ProductService {
                 .price(product.getPrice())
                 .description(product.getDescription())
                 .quantity(product.getQuantity())
+                .build();
+    }
+
+    private PagedResponse<ProductDto> toPagedResponse(Page<Product> products) {
+        Page<ProductDto> productDtos = products.map(this::toDto);
+        return PagedResponse.<ProductDto>builder()
+                .content(productDtos.getContent())
+                .page(productDtos.getNumber())
+                .size(productDtos.getSize())
+                .totalElements(productDtos.getTotalElements())
+                .totalPages(productDtos.getTotalPages())
+                .last(productDtos.isLast())
                 .build();
     }
 

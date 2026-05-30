@@ -1,10 +1,14 @@
 package com.prakash.product_service.service;
 
+import com.prakash.product_service.dto.PagedResponse;
 import com.prakash.product_service.dto.ProductDto;
 import com.prakash.product_service.entity.Product;
 import com.prakash.product_service.exception.ProductCustomException;
 import com.prakash.product_service.messaging.ProductEventPublisher;
 import com.prakash.product_service.repository.ProductRepository;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -111,27 +115,37 @@ class ProductServiceTest {
 
     @Test
     void testSearchProducts_WithKeyword() {
-        when(productRepository.searchByKeyword("Laptop")).thenReturn(List.of(product));
+        PageRequest pageable = PageRequest.of(0, 10);
+        when(productRepository.searchByKeyword("Laptop", pageable))
+                .thenReturn(new PageImpl<>(List.of(product), pageable, 1));
 
-        List<ProductDto> result = productServiceImpl.searchProducts(" Laptop ");
+        PagedResponse<ProductDto> result = productServiceImpl.searchProducts(" Laptop ", 0, 10);
 
-        assertEquals(1, result.size());
-        assertEquals("Laptop", result.getFirst().getName());
-        assertEquals("Laptop description", result.getFirst().getDescription());
-        verify(productRepository).searchByKeyword("Laptop");
+        assertEquals(1, result.getContent().size());
+        assertEquals("Laptop", result.getContent().getFirst().getName());
+        assertEquals("Laptop description", result.getContent().getFirst().getDescription());
+        assertEquals(0, result.getPage());
+        assertEquals(10, result.getSize());
+        assertEquals(1, result.getTotalElements());
+        assertEquals(1, result.getTotalPages());
+        assertTrue(result.isLast());
+        verify(productRepository).searchByKeyword("Laptop", pageable);
         verify(productRepository, never()).findAll();
     }
 
     @Test
     void testSearchProducts_WithoutKeywordReturnsAllProducts() {
-        when(productRepository.findAll()).thenReturn(List.of(product));
+        PageRequest pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "id"));
+        when(productRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(product), pageable, 1));
 
-        List<ProductDto> result = productServiceImpl.searchProducts(" ");
+        PagedResponse<ProductDto> result = productServiceImpl.searchProducts(" ", 0, 10);
 
-        assertEquals(1, result.size());
-        assertEquals("Laptop", result.getFirst().getName());
-        verify(productRepository).findAll();
-        verify(productRepository, never()).searchByKeyword(anyString());
+        assertEquals(1, result.getContent().size());
+        assertEquals("Laptop", result.getContent().getFirst().getName());
+        assertEquals(0, result.getPage());
+        assertEquals(10, result.getSize());
+        verify(productRepository).findAll(pageable);
+        verify(productRepository, never()).searchByKeyword(anyString(), any());
     }
 
 

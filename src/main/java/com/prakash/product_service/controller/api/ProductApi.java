@@ -1,5 +1,6 @@
 package com.prakash.product_service.controller.api;
 
+import com.prakash.product_service.dto.PagedResponse;
 import com.prakash.product_service.dto.ProductDto;
 import com.prakash.product_service.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Tag(name = "Product", description = "API for managing products")
 public interface ProductApi {
@@ -85,9 +84,13 @@ public interface ProductApi {
                     description = "Products found successfully",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ProductDto.class)
+                            schema = @Schema(implementation = PagedResponse.class)
                     )
             )
     })
-    ResponseEntity<List<ProductDto>> searchProducts(@RequestParam(required = false) String keyword);
+    ResponseEntity<PagedResponse<ProductDto>> searchProducts(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    );
 }
