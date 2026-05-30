@@ -1,12 +1,14 @@
+version: '3.8'
+
 services:
   mysql-db:
     image: mysql:8.0
     container_name: mysql-db
     environment:
-        MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-prakash123}
+        MYSQL_ROOT_PASSWORD: prakash123
         MYSQL_DATABASE: product
-        MYSQL_USER: ${DB_USERNAME:-prakash}
-        MYSQL_PASSWORD: ${DB_PASSWORD:-prakash123}
+        MYSQL_USER: prakash
+        MYSQL_PASSWORD: password123
     ports:
          - "3307:3306"
     volumes:
@@ -19,67 +21,19 @@ services:
       timeout: 5s
       retries: 5
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME:-guest}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    volumes:
-      - rabbitmq-data:/var/lib/rabbitmq
-    networks:
-      - product-network
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
-      interval: 10s
-      timeout: 5s
-      start_period: 30s
-      retries: 5
-
   product-service:
-    build: .
-    image: dizprakash/product-service
+    build: . #this is for development, when you want to build the image locally from the Dockerfile
+    # image: dizprakash/product-service this is for production, when you want to pull the image from Docker Hub
+    image: product-service:latest
     container_name: product-service
     environment:
-      DB_URL: jdbc:mysql://mysql-db:3306/product
-      DB_USERNAME: ${DB_USERNAME:-prakash}
-      DB_PASSWORD: ${DB_PASSWORD:?-prakash123}
-      JWT_SECRET: ${JWT_SECRET:-mysecretkey}
-      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-3600000}
-      SERVER_PORT: ${SERVER_PORT:-8090}
-      SPRINGDOC_ENABLED: ${SPRINGDOC_ENABLED:-false}
-      MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
-      MAIL_PORT: ${MAIL_PORT:-587}
-      MAIL_USERNAME: ${MAIL_USERNAME:-dizprakash@gmail.com}
-      MAIL_PASSWORD: ${MAIL_PASSWORD:-mrwctpvpgkwwftyf}
-      MAIL_SMTP_AUTH: ${MAIL_SMTP_AUTH:-true}
-      MAIL_SMTP_STARTTLS_ENABLE: ${MAIL_SMTP_STARTTLS_ENABLE:-true}
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME:-guest}
-      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
-      RABBITMQ_LISTENER_AUTO_STARTUP: true
-      RABBITMQ_LISTENER_RETRY_MAX_ATTEMPTS: ${RABBITMQ_LISTENER_RETRY_MAX_ATTEMPTS:-3}
-      RABBITMQ_LISTENER_RETRY_INITIAL_INTERVAL: ${RABBITMQ_LISTENER_RETRY_INITIAL_INTERVAL:-2000}
-      RABBITMQ_LISTENER_RETRY_MULTIPLIER: ${RABBITMQ_LISTENER_RETRY_MULTIPLIER:-2.0}
-      RABBITMQ_LISTENER_RETRY_MAX_INTERVAL: ${RABBITMQ_LISTENER_RETRY_MAX_INTERVAL:-10000}
-      RABBITMQ_PUBLISH_FAIL_FAST: ${RABBITMQ_PUBLISH_FAIL_FAST:-false}
-      PRODUCT_EXCHANGE: ${PRODUCT_EXCHANGE:-product.exchange}
-      PRODUCT_CREATED_QUEUE: ${PRODUCT_CREATED_QUEUE:-product.created.queue}
-      PRODUCT_CREATED_ROUTING_KEY: ${PRODUCT_CREATED_ROUTING_KEY:-product.created}
-      RABBITMQ_DLX: ${RABBITMQ_DLX:-product.dlx}
-      PRODUCT_CREATED_DLQ: ${PRODUCT_CREATED_DLQ:-product.created.dlq}
-      PRODUCT_CREATED_DLK: ${PRODUCT_CREATED_DLK:-product.created.dead}
-      PRODUCT_NOTIFICATION_EMAIL: ${PRODUCT_NOTIFICATION_EMAIL:-prakash.subedi@mbmc.edu.np}
+      DB_HOST: mysql-db
+      DB_USERNAME: prakash
+      DB_PASSWORD: password123
     ports:
-      - "${SERVER_PORT:-8090}:${SERVER_PORT:-8090}"
+      - "8089:8089"
     depends_on:
       mysql-db:
-        condition: service_healthy
-      rabbitmq:
         condition: service_healthy
     networks:
         - product-network
@@ -103,7 +57,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - grafana-data:/var,lib/grafana # Persistent storage for dashboards
+      - grafana-data:/var/lib/grafana # Persistent storage for dashboards
     networks:
       - product-network
     depends_on:
@@ -118,4 +72,3 @@ volumes:
     mysql-data:
     prometheus-data:
     grafana-data:
-    rabbitmq-data:
